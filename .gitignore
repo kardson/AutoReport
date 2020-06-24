@@ -131,6 +131,9 @@ dmypy.json
 # VSCode files
 .vscode/
 
+# idea files
+.idea/
+
 # temporary html files
 *.html
 *.json
