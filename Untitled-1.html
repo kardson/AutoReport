@@ -1,0 +1,287 @@
+'
+<!DOCTYPE html>\n<html>\n\n
+
+<head>\n
+    <meta charset="utf-8" />\n
+    <meta name="viewport" \n
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />\n <title>
+        上海大学统一身份认证</title>\n <style>
+        \n * {
+            \n padding: 0;
+            \n margin: 0;
+            \n box-sizing: border-box;
+            \n
+        }
+
+        \n\n ul,
+        \n li {
+            \n list-style: none;
+            \n
+        }
+
+        \n\n html,
+        \n body,
+        \n .login-outter {
+            \n height: 100%;
+            \n
+        }
+
+        \n\n .clearfix:after {
+            \n clear: both;
+            \n display: block;
+            \n content: "";
+            \n
+        }
+
+        \n\n .layout-center {
+            \n max-width: 1200px;
+            \n margin: 0 auto;
+            \n width: 100%;
+            \n
+        }
+
+        \n\n .wrapper {
+            \n height: 100%;
+            \n position: relative;
+            \n
+        }
+
+        \n\n .wrapper .topbar {
+            \n position: absolute;
+            \n top: 0;
+            \n width: 100%;
+            \n z-index: 9;
+            \n background: url("images/headerbg.jpg") repeat-x;
+            \n height: 95px;
+            \n
+        }
+
+        \n\n @media screen and (max-width: 768px) {
+            \n .wrapper .topbar {
+                \n background: none;
+                \n
+            }
+
+            \n\n .wrapper .topbar .layout-center {
+                \n margin: 10px auto;
+                \n
+            }
+
+            \n
+        }
+
+        \n\n .wrapper .topbar .left-logo {
+            \n height: 95px;
+            \n background: url("images/logo-white.png") 0/170px no-repeat;
+            \n
+        }
+
+        \n\n @media screen and (max-width: 768px) {
+            \n .wrapper .topbar .left-logo {
+                \n height: 125px;
+                \n background: url("images/logo-m.png") center/250px no-repeat;
+                \n
+            }
+
+            \n
+        }
+
+        \n\n .wrapper .footer {
+            \n font-size: 10px;
+            \n position: absolute;
+            \n bottom: 0;
+            \n width: 100%;
+            \n background: url("images/footerbg.jpg") repeat-x;
+            \n height: 78px;
+            \n text-align: center;
+            \n line-height: 1.4;
+            \n color: #fff;
+            \n
+        }
+
+        \n\n @media screen and (max-width: 768px) {
+            \n .wrapper .footer {
+                \n display: none;
+                \n
+            }
+
+            \n
+        }
+
+        \n\n .wrapper .footer .layout-center {
+            \n margin: 10px auto 0;
+            \n
+        }
+
+        \n\n .wrapper .login-wrap {
+            \n background: url("images/login-bg.jpg") center/cover repeat-x;
+            \n background-color: #ccc;
+            \n height: 100%;
+            \n padding: 100px 0 80px;
+            \n
+        }
+
+        \n\n @media screen and (max-width: 768px) {
+            \n .wrapper .login-wrap {
+                \n padding: 150px 0 0;
+                \n background: #fff url("images/login-bg-m.jpg") bottom/cover no-repeat;
+                \n
+            }
+
+            \n
+        }
+
+        \n\n .wrapper .login-wrap img {
+            \n width: 100%;
+            \n display: block;
+            \n
+        }
+
+        \n\n @media screen and (min-width: 769px) {
+            \n .wrapper .center-session {
+                \n width: 100%;
+                \n max-width: 350px;
+                \n float: right;
+                \n padding: 30px;
+                \n text-align: center;
+                \n display: block;
+                \n background: rgba(255, 255, 255, 0.8);
+                \n border-top: 4px solid #275085;
+                \n min-height: 330px;
+                \n max-height: 360px;
+                \n margin-top: 8%;
+                \n
+            }
+
+            \n\n .wrapper .center-session .header-title {
+                \n font-size: 22px;
+                \n color: #275085;
+                \n text-align: left;
+                \n display: block;
+                \n
+            }
+
+            \n\n .wrapper .center-session form .input-item {
+                \n margin-top: 20px;
+                \n
+            }
+
+            \n\n .wrapper .center-session form .input-item input {
+                \n width: 100%;
+                \n display: block;
+                \n padding: 10px;
+                \n border: 1px solid #ddd;
+                \n color: #222;
+                \n background: #fff;
+                \n border-radius: 3px;
+                \n outline: none;
+                \n
+            }
+
+            \n
+        }
+
+        \n\n @media screen and (max-width: 768px) {
+            \n .wrapper .center-session {
+                \n width: 80%;
+                \n margin: 0 auto;
+                \n
+            }
+
+            \n\n .wrapper .center-session .header-title {
+                \n display: none;
+                \n
+            }
+
+            \n\n .wrapper .center-session form .input-item {
+                \n position: relative;
+                \n margin-bottom: 20px;
+                \n
+            }
+
+            \n\n .wrapper .center-session form .input-item .login-icon {
+                \n position: absolute;
+                \n left: 10px;
+                \n top: 8px;
+                \n display: inline-block;
+                \n width: 20px;
+                \n height: 20px;
+                \n background: url("images/user.png") center/20px no-repeat;
+                \n
+            }
+
+            \n\n .wrapper .center-session form .input-item .login-icon.loginpass-icon {
+                \n background: url("images/password.png") center/25px no-repeat;
+                \n
+            }
+
+            \n\n .wrapper .center-session form .input-item input {
+                \n width: 100%;
+                \n padding: 10px;
+                \n border: none;
+                \n border-radius: 6px;
+                \n padding-left: 35px;
+                \n outline: none;
+                \n
+            }
+
+            \n
+        }
+
+        \n\n .wrapper .center-session #login-submit {
+            \n outline: none;
+            \n padding: 10px 0;
+            \n background-color: #275085;
+            \n border: none;
+            \n color: #fff;
+            \n width: 100%;
+            \n border-radius: 6px;
+            \n
+        }
+
+        \n\n .wrapper .center-session .other-link {
+            \n text-align: right;
+            \n margin: 15px 0 5px;
+            \n
+        }
+
+        \n\n .wrapper .center-session .other-link a {
+            \n font-size: 13px;
+            \n color: #275085;
+            \n text-decoration: underline;
+            \n
+        }
+
+        \n\n .wrapper .center-session .showMessage {
+            \n font-size: 12px;
+            \n margin: 5px 0 10px;
+            \n text-align: left;
+            \n min-height: 20px;
+            \n color: red;
+            \n
+        }
+
+        \n
+    </style>\n</head>\n\n
+
+<body>\n<div class="login-outter">\n <div class="web-wrap wrapper">\n <div class="topbar">\n <div
+                    class="layout-center clearfix">\n <div class="left-logo"></div>\n </div>\n </div>\n <div
+                class="login-wrap">\n <div class="layout-center">\n <div class="center-session">\n <label
+                            class="header-title">登录/Login</label>\n <form id="login-form" action="/login" method="post">
+                            \n <div class="input-item">\n <i class="login-icon loginname-icon"></i>\n <input type="text"
+                                    name="username" id="username" placeholder="请输入账号/Campus ID Number" />\n </div>\n
+                            <div class="input-item">\n <i class="login-icon loginpass-icon"></i>\n <input
+                                    type="password" name="password" id="password" placeholder="请输入密码/Password" />\n
+                            </div>\n <p class="showMessage">\n \n </p>\n <input type="submit" name="login_submit"
+                                id="login-submit" value="登录/Login" />\n </form>\n <div class="other-link clearfix">\n
+                            <p><a class="leftlink" href="https://newsso.shu.edu.cn/changePassword"
+                                    target="_blank">修改密码(Change Password)</a>\n </p>\n <p><a class="leftlink"
+                                    href="https://newsso.shu.edu.cn/reset" target="_blank">重置密码(Reset Password)</a></p>
+                            \n </div>\n </div>\n </div>\n </div>\n <div class="footer">\n <div class="layout-center">\n
+                    <div class="footer-cp">信息服务电话：66133370 技术支持 上海大学信息化工作办公室</div>\n <div class="footer-cp">Technical
+                        support: IT Office of Shanghai University Tel:66133370</div>\n <div class="footer-cp">
+                        地址：上海市宝山区上大路99号 邮编：200444 Address: 99 Shangda Rd. Shanghai, China. 200444.</div>\n <div
+                        class="footer-cp">Copyright © 2012-2020 Shanghai University, All Rights Reserved.</div>\n </div>
+                \n </div>\n </div>\n</div>\n\n</body>\n\n
+
+</html>'
