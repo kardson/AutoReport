@@ -1,162 +1,68 @@
 import sys
-import requests
 import time
-import base64
-import json
-from lxml import etree
-import urllib.parse
-
-loginURL = "https://newsso.shu.edu.cn/login"
-reportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=1"
-homeURL = "https://selfreport.shu.edu.cn"
-# post
-
-class postBody(object):
-    def __init__(self, date=time.strftime("%Y-%m-%d", time.localtime()), # be aware of your sever timezone should be set as utc+8
-                        bodyStatus="良好", 
-                        symptom="", 
-                        temperature="36.2",
-                        QRCodeColor="绿色", 
-                        meal=["早餐", "中餐", "晚餐"],
-                        timeMark=""):
-        self.date = date
-        self.bodyStatus = bodyStatus
-        self.symptom = symptom
-        self.temperature = temperature
-        self.QRCodeColor = QRCodeColor
-        self.meal = meal
-        self.timeMark = "上午" if timeMark else "下午"
-        self.f_state = None
-        self.viewstate = None
-        self.viewstategenerator = None
-        self.submitData = None
-
-    def set(self):
-        self.f_state = {
-            "p1_BaoSRQ": {
-                "Text": self.date
-            },
-            "p1_DangQSTZK": {
-                "F_Items": [
-                    ["良好", "良好", 1],
-                    ["不适", "不适", 1]
-                ],
-                "SelectedValue": self.bodyStatus
-            },
-            "p1_ZhengZhuang": {
-                "Hidden": True,
-                "F_Items": [
-                    ["感冒", "感冒", 1],
-                    ["咳嗽", "咳嗽", 1],
-                    ["发热", "发热", 1]
-                ],
-                "SelectedValueArray": []
-            },
-            "p1_TiWen": {
-                "Text": self.temperature
-            },
-            "p1_SuiSM": {
-                "SelectedValue": self.QRCodeColor,
-                "F_Items": [
-                    ["红色", "红色", 1],
-                    ["黄色", "黄色", 1],
-                    ["绿色", "绿色", 1]
-                ]
-            },
-            "p1_ShiFJC": {
-                "SelectedValueArray": self.meal,
-                "F_Items": [
-                    ["早餐", "早餐", 1],
-                    ["午餐", "午餐", 1],
-                    ["晚餐", "晚餐", 1]
-                ]
-            },
-            "p1_ctl00_btnSubmit": {
-                "Hidden": False
-            },
-            "p1": {
-                "Title": f"每日两报（{self.timeMark}）",
-                "IFrameAttributes": {}
-            }
-        }
-
-
-    def get(self):
-        self.submitData = {
-            "__EVENTTARGET": "p1$ctl00$btnSubmit",
-            "__EVENTARGUMENT": "",
-            "__VIEWSTATEGENERATOR": "DC4D08A3",
-            "p1$ChengNuo": "p1_ChengNuo",
-            "p1$BaoSRQ": self.date,
-            "p1$DangQSTZK": self.bodyStatus,
-            "p1$TiWen": self.temperature,
-            "p1$SuiSM": self.QRCodeColor,
-            "p1$ShiFJC": self.meal[0],
-            "p1$ShiFJC": self.meal[1],
-            "p1$ShiFJC": self.meal[2],
-            "F_TARGET": "p1_ctl00_btnSubmit",
-            "p1_Collapsed": "false",
-            "F_STATE": base64.b64encode(json.dumps(self.F_STATE).encode)
-        }
+from selenium import webdriver
 
 class AutoReport(object):
 
-    def __init__(self, id, password, timeMark):
-        self.session = requests.Session()
-        self.id = id
+    loginURL = "https://newsso.shu.edu.cn/login"
+    reportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=%s"
+    historyURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport_History.aspx"
+    historyReportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?day=%s&t=%s"
+    timeMarkDict = {"晨报": 1, "晚报": 2}
+
+    def __init__(self, username="", password="", timeMark="", temperature="36.2"):
+        self.browser = webdriver.Chrome("./chromedriver")
+        self.id = username
         self.password = password
-        self.timeMark = timeMark
-    
-    def _login(self):
-        self.session.headers.update({"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"})
-        self.session.headers.update({"Accept-Language": "zh-cn"})
-        self.session.headers.update({"Accept-Encoding": "gzip, deflate, br"})
-        self.session.headers.update({"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"})
-        self.session.headers.update({"Connection": "keep-alive"})
-        self.session.headers.update({"Host": "newsso.shu.edu.cn"})
+        self.timeMark = self.timeMarkDict[timeMark]
+        self.temperature = temperature
 
-        # retrieve cookie
-        login = self.session.get(loginURL)
+    def longin(self):
+        self.browser.get(self.loginURL)
+        idBlock = self.browser.find_element_by_id("username")
+        idBlock.send_keys(self.id)
+        passwordBlock = self.browser.find_element_by_id("password")
+        passwordBlock.send_keys(self.password)
+        button = self.browser.find_element_by_id("login-submit")
+        button.click()
 
-        # post data
-        data = {
-            "username": self.id,
-            "password": self.password,
-            "login_submit": "登录/Login"
-        }
-        self.session.headers.update({"Content-Type": "application/x-www-form-urlencoded"})
-        self.session.headers.update({"Referer": "https://newsso.shu.edu.cn/login"})
-        self.session.headers.update({"Origin": "https://newsso.shu.edu.cn"})
-        loginPost = self.session.post(loginURL, data=urllib.parse.urlencode(data), timeout=10, allow_redirects=False)
-        self.session.headers.pop("Content-Type")
-        self.session.headers.pop("Origin")
-        loginPostRedirect = self.session.get("https://newsso.shu.edu.cn"+loginPost.headers["Location"], timeout=10)
-        self.session.headers.pop("Referer")
+    def submitData(self, URL):
+        self.browser.get(URL)
+        undertakeCheckBox = self.browser.find_element_by_id("p1_ChengNuo-inputEl-icon")
+        classStatus = undertakeCheckBox.get_attribute("class")
+        if "f-checked" not in classStatus: undertakeCheckBox.click()
+        temperature = self.browser.find_element_by_id("p1_TiWen-inputEl")
+        temperature.send_keys(self.temperature)
+        QRCodeColorRadiusButton = self.browser.find_element_by_id("fineui_7-inputEl-icon")
+        QRCodeColorRadiusButton.click()
+        breakfastCheckBox = self.browser.find_element_by_id("fineui_8-inputEl-icon")
+        classStatus = breakfastCheckBox.get_attribute("class")
+        if "f-checked" not in classStatus: breakfastCheckBox.click()
+        lunchCheckBox = self.browser.find_element_by_id("fineui_9-inputEl-icon")
+        classStatus = lunchCheckBox.get_attribute("class")
+        if "f-checked" not in classStatus: lunchCheckBox.click()
+        dinnerCheckBox = self.browser.find_element_by_id("fineui_10-inputEl-icon")
+        classStatus = dinnerCheckBox.get_attribute("class")
+        if "f-checked" not in classStatus: dinnerCheckBox.click()
+        submitButton = self.browser.find_element_by_id("p1_ctl00_btnSubmit")
+        submitButton.click()
+        submitConfirmButton = self.browser.find_element_by_id("fineui_14")
+        submitConfirmButton.click()
 
-        self.session.headers.update({"Host": "selfreport.shu.edu.cn"})
-        mainpage1 = self.session.get(homeURL+"/", allow_redirects=False)
-        mainpage2 = self.session.get(homeURL+mainpage1.headers["Location"], allow_redirects=False)
-        self.session.headers.update({"Host": "newsso.shu.edu.cn"})
-        mainpage3 = self.session.get(mainpage2.headers["Location"], allow_redirects=False)
-        self.session.headers.update({"Host": "selfreport.shu.edu.cn"})
-        mainpage4 = self.session.get(mainpage3.headers["Location"])
-        # resp3 = self.session.get("https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=1", timeout=10)
-        html = etree.HTML(resp.text)
-        viewstate = html.xpath('string(//input[@id="__viewstate"]/@value)')
-        viewstategenerator = html.xpath('string(//input[@id="__viewstategenerator"]/@value')
-        return
+    def checkHistory(self):
+        self.browser.get(self.historyURL)
+        records = self.browser.find_element_by_class_name("f-datalist-list").text.split("\n")
+        unfinished = [item for item in records if "未填报" in item]
+        for item in unfinished:
+            self.submitData(self.historyReportURL%(item[:10], self.timeMarkDict[item[10:12]]))
+        return str(unfinished) if unfinished else "None unfinised report"
 
-    def generateData(self):
-        resp = self.session.get("https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=2")
-        html = etree.HTML(resp.text)
-        viewstate = html.xpath('string(//input[@id="__viewstate"]/@value)')
-        viewstategenerator = html.xpath('string(//input[@id="__viewstategenerator"]/@value')
-        return
-
-    def postData(self):
-        pass
-        
+    def __del__(self):
+        self.browser.close()
+        self.browser.quit()
 
 if __name__ == "__main__":
-    automation = AutoReport(sys.argv[1], sys.argv[2], 1)
-    automation._login()
+    flow = AutoReport(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    flow.longin()
+    # flow.submitData()
+    flow.checkHistory()
