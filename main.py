@@ -1,11 +1,15 @@
+import sys
 import requests
 import time
 import base64
 import json
+from lxml import etree
+import urllib.parse
 
 loginURL = "https://newsso.shu.edu.cn/login"
 reportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=1"
-post
+homeURL = "https://selfreport.shu.edu.cn"
+# post
 
 class postBody(object):
     def __init__(self, date=time.strftime("%Y-%m-%d", time.localtime()), # be aware of your sever timezone should be set as utc+8
@@ -13,17 +17,22 @@ class postBody(object):
                         symptom="", 
                         temperature="36.2",
                         QRCodeColor="绿色", 
-                        meal=["早餐", "中餐", "晚餐"]):
+                        meal=["早餐", "中餐", "晚餐"],
+                        timeMark=""):
         self.date = date
         self.bodyStatus = bodyStatus
         self.symptom = symptom
         self.temperature = temperature
         self.QRCodeColor = QRCodeColor
         self.meal = meal
+        self.timeMark = "上午" if timeMark else "下午"
+        self.f_state = None
+        self.viewstate = None
+        self.viewstategenerator = None
         self.submitData = None
 
     def set(self):
-        self.F_STATE = {
+        self.f_state = {
             "p1_BaoSRQ": {
                 "Text": self.date
             },
@@ -66,10 +75,13 @@ class postBody(object):
                 "Hidden": False
             },
             "p1": {
-                "Title": "每日两报（上午）",
+                "Title": f"每日两报（{self.timeMark}）",
                 "IFrameAttributes": {}
             }
         }
+
+
+    def get(self):
         self.submitData = {
             "__EVENTTARGET": "p1$ctl00$btnSubmit",
             "__EVENTARGUMENT": "",
@@ -83,12 +95,9 @@ class postBody(object):
             "p1$ShiFJC": self.meal[1],
             "p1$ShiFJC": self.meal[2],
             "F_TARGET": "p1_ctl00_btnSubmit",
-            "p1_Collapsed": "false"
+            "p1_Collapsed": "false",
             "F_STATE": base64.b64encode(json.dumps(self.F_STATE).encode)
         }
-
-    def get(self):
-        self
 
 class AutoReport(object):
 
@@ -99,19 +108,55 @@ class AutoReport(object):
         self.timeMark = timeMark
     
     def _login(self):
+        self.session.headers.update({"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"})
+        self.session.headers.update({"Accept-Language": "zh-cn"})
+        self.session.headers.update({"Accept-Encoding": "gzip, deflate, br"})
+        self.session.headers.update({"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"})
+        self.session.headers.update({"Connection": "keep-alive"})
+        self.session.headers.update({"Host": "newsso.shu.edu.cn"})
+
+        # retrieve cookie
+        login = self.session.get(loginURL)
+
+        # post data
         data = {
             "username": self.id,
             "password": self.password,
             "login_submit": "登录/Login"
         }
-        # self.session.post(loginURL, data=data, timeout=5)
-        resp = self.session.get("https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=1")
+        self.session.headers.update({"Content-Type": "application/x-www-form-urlencoded"})
+        self.session.headers.update({"Referer": "https://newsso.shu.edu.cn/login"})
+        self.session.headers.update({"Origin": "https://newsso.shu.edu.cn"})
+        loginPost = self.session.post(loginURL, data=urllib.parse.urlencode(data), timeout=10, allow_redirects=False)
+        self.session.headers.pop("Content-Type")
+        self.session.headers.pop("Origin")
+        loginPostRedirect = self.session.get("https://newsso.shu.edu.cn"+loginPost.headers["Location"], timeout=10)
+        self.session.headers.pop("Referer")
+
+        self.session.headers.update({"Host": "selfreport.shu.edu.cn"})
+        mainpage1 = self.session.get(homeURL+"/", allow_redirects=False)
+        mainpage2 = self.session.get(homeURL+mainpage1.headers["Location"], allow_redirects=False)
+        self.session.headers.update({"Host": "newsso.shu.edu.cn"})
+        mainpage3 = self.session.get(mainpage2.headers["Location"], allow_redirects=False)
+        self.session.headers.update({"Host": "selfreport.shu.edu.cn"})
+        mainpage4 = self.session.get(mainpage3.headers["Location"])
+        # resp3 = self.session.get("https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=1", timeout=10)
+        html = etree.HTML(resp.text)
+        viewstate = html.xpath('string(//input[@id="__viewstate"]/@value)')
+        viewstategenerator = html.xpath('string(//input[@id="__viewstategenerator"]/@value')
         return
-    
+
+    def generateData(self):
+        resp = self.session.get("https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=2")
+        html = etree.HTML(resp.text)
+        viewstate = html.xpath('string(//input[@id="__viewstate"]/@value)')
+        viewstategenerator = html.xpath('string(//input[@id="__viewstategenerator"]/@value')
+        return
+
     def postData(self):
-        
+        pass
         
 
 if __name__ == "__main__":
-    automation = AutoReport("*", "*", 1)
+    automation = AutoReport(sys.argv[1], sys.argv[2], 1)
     automation._login()
