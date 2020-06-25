@@ -137,3 +137,6 @@ dmypy.json
 # temporary html files
 *.html
 *.json
+
+# self-prepared files
+chromedriver
