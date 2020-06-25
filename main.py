@@ -10,14 +10,17 @@ class AutoReport(object):
     historyReportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?day=%s&t=%s"
     timeMarkDict = {"晨报": 1, "晚报": 2}
 
-    def __init__(self, username="", password="", timeMark="", temperature="36.2"):
-        self.browser = webdriver.Chrome("./chromedriver")
-        self.id = username
+    def __init__(self, id="", password="", temperature="36.2"):
+        self.id = id
         self.password = password
-        self.timeMark = self.timeMarkDict[timeMark]
         self.temperature = temperature
+        self.timeMark = 1 if time.strftime("%p", time.localtime())=="AM" else 2
+        option = webdriver.ChromeOptions()
+        option.add_argument("--headless")
+        option.add_argument("--disable-dev-shm-usage")
+        self.browser = webdriver.Chrome("./chromedriver", chrome_options=option)
 
-    def longin(self):
+    def login(self):
         self.browser.get(self.loginURL)
         idBlock = self.browser.find_element_by_id("username")
         idBlock.send_keys(self.id)
@@ -48,21 +51,29 @@ class AutoReport(object):
         submitButton.click()
         submitConfirmButton = self.browser.find_element_by_id("fineui_14")
         submitConfirmButton.click()
+        returnMessage = self.browser.find_element_by_id("f-messagebox-message").text.strip()
+        return 1 if returnMessage=="提交成功" else 0
 
     def checkHistory(self):
         self.browser.get(self.historyURL)
         records = self.browser.find_element_by_class_name("f-datalist-list").text.split("\n")
         unfinished = [item for item in records if "未填报" in item]
+        return unfinished if unfinished else None
+
+    def reportUnfinished(self):
+        unfinished = self.checkHistory()
+        if unfinished == None:
+            return None
         for item in unfinished:
             self.submitData(self.historyReportURL%(item[:10], self.timeMarkDict[item[10:12]]))
-        return str(unfinished) if unfinished else "None unfinised report"
+        return str(unfinished)
 
     def __del__(self):
         self.browser.close()
         self.browser.quit()
 
 if __name__ == "__main__":
-    flow = AutoReport(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
-    flow.longin()
+    flow = AutoReport(id=sys.argv[1], password=sys.argv[2], temperature=sys.argv[3])
+    flow.login()
     # flow.submitData()
     flow.checkHistory()
