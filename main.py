@@ -1,5 +1,4 @@
-import sys
-import time
+import sys, time, logging
 from selenium import webdriver
 
 class AutoReport(object):
@@ -14,66 +13,97 @@ class AutoReport(object):
         self.id = id
         self.password = password
         self.temperature = temperature
-        self.timeMark = 1 if time.strftime("%p", time.localtime())=="AM" else 2
+        self.timeMark = "晨报" if time.strftime("%p", time.localtime())=="AM" else "晚报"
+        self.date = time.strftime("%Y-%m-%d", time.localtime())
+        self.__browser = None
+        # TODO logger need to be added
+
+
+    def __invokeBrowser(self):
         option = webdriver.ChromeOptions()
         option.add_argument("--headless")
+        option.add_argument("--disable-gpu")
         option.add_argument("--disable-dev-shm-usage")
-        self.browser = webdriver.Chrome("./chromedriver", chrome_options=option)
+        self.__browser = webdriver.Chrome("./chromedriver", chrome_options=option)
+        return 0
 
+    def __delBrowser(self):
+        self.__browser.close()
+        self.__browser.quit()
+        
+    # TODO handle the situation of wrong id or password
     def login(self):
-        self.browser.get(self.loginURL)
-        idBlock = self.browser.find_element_by_id("username")
+        self.__browser.get(self.loginURL)
+        idBlock = self.__browser.find_element_by_id("username")
         idBlock.send_keys(self.id)
-        passwordBlock = self.browser.find_element_by_id("password")
+        passwordBlock = self.__browser.find_element_by_id("password")
         passwordBlock.send_keys(self.password)
-        button = self.browser.find_element_by_id("login-submit")
+        button = self.__browser.find_element_by_id("login-submit")
         button.click()
+        time.sleep(0.5)
+        try:
+            errorMsg = self.__browser.find_element_by_class_name("showMessage")
+        except:
+            return 1
+        return 0
 
-    def submitData(self, URL):
-        self.browser.get(URL)
-        undertakeCheckBox = self.browser.find_element_by_id("p1_ChengNuo-inputEl-icon")
-        classStatus = undertakeCheckBox.get_attribute("class")
-        if "f-checked" not in classStatus: undertakeCheckBox.click()
-        temperature = self.browser.find_element_by_id("p1_TiWen-inputEl")
-        temperature.send_keys(self.temperature)
-        QRCodeColorRadiusButton = self.browser.find_element_by_id("fineui_7-inputEl-icon")
-        QRCodeColorRadiusButton.click()
-        breakfastCheckBox = self.browser.find_element_by_id("fineui_8-inputEl-icon")
-        classStatus = breakfastCheckBox.get_attribute("class")
-        if "f-checked" not in classStatus: breakfastCheckBox.click()
-        lunchCheckBox = self.browser.find_element_by_id("fineui_9-inputEl-icon")
-        classStatus = lunchCheckBox.get_attribute("class")
-        if "f-checked" not in classStatus: lunchCheckBox.click()
-        dinnerCheckBox = self.browser.find_element_by_id("fineui_10-inputEl-icon")
-        classStatus = dinnerCheckBox.get_attribute("class")
-        if "f-checked" not in classStatus: dinnerCheckBox.click()
-        submitButton = self.browser.find_element_by_id("p1_ctl00_btnSubmit")
-        submitButton.click()
-        submitConfirmButton = self.browser.find_element_by_id("fineui_14")
-        submitConfirmButton.click()
-        returnMessage = self.browser.find_element_by_id("f-messagebox-message").text.strip()
-        return 1 if returnMessage=="提交成功" else 0
+
+    def submitData(self, date, timeMark):
+        try:
+            URL = self.historyReportURL % (date, self.timeMarkDict[timeMark])
+            self.__browser.get(URL)
+            undertakeCheckBox = self.__browser.find_element_by_id("p1_ChengNuo-inputEl-icon")
+            classStatus = undertakeCheckBox.get_attribute("class")
+            if "f-checked" not in classStatus: undertakeCheckBox.click()
+            temperature = self.__browser.find_element_by_id("p1_TiWen-inputEl")
+            temperature.send_keys(self.temperature)
+            QRCodeColorRadiusButton = self.__browser.find_element_by_id("fineui_7-inputEl-icon")
+            QRCodeColorRadiusButton.click()
+            breakfastCheckBox = self.__browser.find_element_by_id("fineui_8-inputEl-icon")
+            classStatus = breakfastCheckBox.get_attribute("class")
+            if "f-checked" not in classStatus: breakfastCheckBox.click()
+            lunchCheckBox = self.__browser.find_element_by_id("fineui_9-inputEl-icon")
+            classStatus = lunchCheckBox.get_attribute("class")
+            if "f-checked" not in classStatus: lunchCheckBox.click()
+            dinnerCheckBox = self.__browser.find_element_by_id("fineui_10-inputEl-icon")
+            classStatus = dinnerCheckBox.get_attribute("class")
+            if "f-checked" not in classStatus: dinnerCheckBox.click()
+            submitButton = self.__browser.find_element_by_id("p1_ctl00_btnSubmit")
+            submitButton.click()
+            time.sleep(0.5)
+            submitConfirmButton = self.__browser.find_element_by_id("fineui_14")
+            submitConfirmButton.click()
+            time.sleep(0.5)
+            returnMessage = self.__browser.find_element_by_class_name("f-messagebox-message")
+        except Exception as e:
+            print(e)
+            return 0
+        return 1 if returnMessage == "提交成功" else 0
+        # TODO handle error
+
 
     def checkHistory(self):
-        self.browser.get(self.historyURL)
-        records = self.browser.find_element_by_class_name("f-datalist-list").text.split("\n")
-        unfinished = [item for item in records if "未填报" in item]
-        return unfinished if unfinished else None
+        self.__browser.get(self.historyURL)
+        records = self.__browser.find_element_by_class_name("f-datalist-list").text.split("\n")
+        unfinishedRecord = [(item[:10], item[10:12]) for item in records if "未填报" in item]
+        return unfinishedRecord if unfinishedRecord else None
 
     def reportUnfinished(self):
-        unfinished = self.checkHistory()
-        if unfinished == None:
+        unfinishedRecord = self.checkHistory()
+        if unfinishedRecord == None:
             return None
-        for item in unfinished:
-            self.submitData(self.historyReportURL%(item[:10], self.timeMarkDict[item[10:12]]))
-        return str(unfinished)
+        for item in unfinishedRecord:
+            if item[0] == self.date and item[1] != self.timeMark:
+                continue
+            self.submitData(item[0], item[1])
+        return str(unfinishedRecord)
 
-    def __del__(self):
-        self.browser.close()
-        self.browser.quit()
+    def report(self):
+        self.__invokeBrowser()
+        self.login()
+        self.reportUnfinished()
+        self.__delBrowser()
 
 if __name__ == "__main__":
     flow = AutoReport(id=sys.argv[1], password=sys.argv[2], temperature=sys.argv[3])
-    flow.login()
-    # flow.submitData()
-    flow.checkHistory()
+    flow.report()
