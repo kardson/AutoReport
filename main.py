@@ -1,4 +1,4 @@
-import sys, time, logging
+import sys, time
 from selenium import webdriver
 
 class AutoReport(object):
@@ -24,8 +24,8 @@ class AutoReport(object):
         option.add_argument("--headless")
         option.add_argument("--disable-gpu")
         option.add_argument("--disable-dev-shm-usage")
-        self.__browser = webdriver.Chrome("./chromedriver", chrome_options=option)
-        return 0
+        self.__browser = webdriver.Chrome("./chromedriver", options=option)
+        return 1
 
     def __delBrowser(self):
         self.__browser.close()
@@ -34,24 +34,27 @@ class AutoReport(object):
     # TODO handle the situation of wrong id or password
     def login(self):
         self.__browser.get(self.loginURL)
+        self.__browser.implicitly_wait(1)
         idBlock = self.__browser.find_element_by_id("username")
         idBlock.send_keys(self.id)
         passwordBlock = self.__browser.find_element_by_id("password")
         passwordBlock.send_keys(self.password)
         button = self.__browser.find_element_by_id("login-submit")
         button.click()
-        time.sleep(0.5)
+        self.__browser.implicitly_wait(1)
         try:
             errorMsg = self.__browser.find_element_by_class_name("showMessage")
         except:
             return 1
-        return 0
+        else:
+            return 0
 
 
     def submitData(self, date, timeMark):
         try:
             URL = self.historyReportURL % (date, self.timeMarkDict[timeMark])
             self.__browser.get(URL)
+            self.__browser.implicitly_wait(1)
             undertakeCheckBox = self.__browser.find_element_by_id("p1_ChengNuo-inputEl-icon")
             classStatus = undertakeCheckBox.get_attribute("class")
             if "f-checked" not in classStatus: undertakeCheckBox.click()
@@ -70,15 +73,16 @@ class AutoReport(object):
             if "f-checked" not in classStatus: dinnerCheckBox.click()
             submitButton = self.__browser.find_element_by_id("p1_ctl00_btnSubmit")
             submitButton.click()
-            time.sleep(0.5)
+            self.__browser.implicitly_wait(1)
             submitConfirmButton = self.__browser.find_element_by_id("fineui_14")
             submitConfirmButton.click()
-            time.sleep(0.5)
+            self.__browser.implicitly_wait(1)
             returnMessage = self.__browser.find_element_by_class_name("f-messagebox-message")
         except Exception as e:
             print(e)
             return 0
-        return 1 if returnMessage == "提交成功" else 0
+        else:
+            return 1 if returnMessage == "提交成功" else 0
         # TODO handle error
 
 
@@ -91,11 +95,13 @@ class AutoReport(object):
     def reportUnfinished(self):
         unfinishedRecord = self.checkHistory()
         if unfinishedRecord == None:
+            print("None")
             return None
         for item in unfinishedRecord:
             if item[0] == self.date and item[1] != self.timeMark:
                 continue
             self.submitData(item[0], item[1])
+            print(str(unfinishedRecord))
         return str(unfinishedRecord)
 
     def report(self):
