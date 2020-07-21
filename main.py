@@ -82,9 +82,11 @@ class postBody(object):
     def get(self):
         self.set()
         self.submitData = {
+            # actually there's no need for the parameters about state
             "__EVENTTARGET": "p1$ctl00$btnSubmit",
             "__EVENTARGUMENT": "",
-            "__VIEWSTATEGENERATOR": "DC4D08A3",
+            "__VIEWSTATE": self.viewstate,
+            "__VIEWSTATEGENERATOR": self.viewstategenerator,
             "p1$ChengNuo": "p1_ChengNuo",
             "p1$BaoSRQ": self.date,
             "p1$DangQSTZK": self.bodyStatus,
