@@ -101,7 +101,7 @@ class AutoReport(object):
             if item[0] == self.date and item[1] != self.timeMark:
                 continue
             self.submitData(item[0], item[1])
-            print(str(unfinishedRecord))
+            print(item)
         return str(unfinishedRecord)
 
     def report(self):
