@@ -1,12 +1,12 @@
 # AutoReport
 Automated report scripts for SHU students on campus based on Selenium  
 
-## 1. Some question
+## ~~1. Some question~~
 
-Q: Why there's not a simple solution?  
-A: Cuz the Cookies can not be handled properly.  
+~~Q: Why there's not a simple solution?~~  
+~~A: Cuz the Cookies can not be handled properly.~~  
 
-Any idea for Cookies handling so that F_ vars on the reporting page can be obtained successfully?
+~~Any idea for Cookies handling so that F_ vars on the reporting page can be obtained successfully?~~
 
 ## 2. How to use
 1. Set your environment timezone to Shanghai, China
