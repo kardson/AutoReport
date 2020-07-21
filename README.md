@@ -8,7 +8,7 @@ Automated report scripts for SHU students on campus in a traditional way
 5. Add a line `SHELL=/bin/bash` 
 6. Add a new line and input the instruction below, with `[]` replaced with your info, then save and quit.
 ``` 
-* 7,20 * * * cd [path to your script folder] && source [path to your venv]/bin/activate && python [path to the script folder]/main.py [Your student ID] [Your password] [Temperature] && deactivate
+* 7,20 * * * source [path to your venv]/bin/activate && python [path to the script folder]/main.py [Your student ID] [Your password] [Temperature] && deactivate
 ```
 
 ## 2. Alternative method  
