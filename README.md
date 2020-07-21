@@ -10,3 +10,10 @@ Automated report scripts for SHU students on campus in a traditional way
 ``` 
 * 7,20 * * * cd [path to your script folder] && source [path to your venv]/bin/activate && python [path to the script folder]/main.py [Your student ID] [Your password] [Temperature] && deactivate
 ```
+
+## 2. Alternative method  
+Check the brach named  ___selenium___  to explore more  
+
+## 3. TODO  
+1. Status notification via Telegram Bot  
+2. Flask-based backend for Telegram Bot to build an automated check-in service  
