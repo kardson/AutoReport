@@ -1,9 +1,9 @@
-import sys, time
+import sys, time, base64, json
 from selenium import webdriver
 
 class AutoReport(object):
 
-    loginURL = "https://newsso.shu.edu.cn/login"
+    loginURL = "https://newsso.shu.edu.cn/login/"
     mainpageURL = "https://selfreport.shu.edu.cn"
     reportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=%s"
     historyURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport_History.aspx"
@@ -19,6 +19,17 @@ class AutoReport(object):
         self.__browser = None
         # TODO logger need to be added
 
+    def __generateLoginURL(self):
+        param = {
+            "timestamp": time.time_ns(),
+            "responseType": "code",
+            "clientId": "WUHWfrntnWYHZfzQ5QvXUCVy",
+            "scope": "1",
+            "redirectUri": "https://selfreport.shu.edu.cn/LoginSSO.aspx?ReturnUrl=%2f",
+            "state": ""
+        }
+        loginURL = self.loginURL + str(base64.b64encode(json.dumps(param).encode()), encoding='utf8')
+        return loginURL
 
     def __invokeBrowser(self):
         option = webdriver.ChromeOptions()
@@ -34,7 +45,7 @@ class AutoReport(object):
         
     # TODO handle the situation of wrong id or password
     def login(self):
-        self.__browser.get(self.mainpageURL)
+        self.__browser.get(self.__generateLoginURL())
         self.__browser.implicitly_wait(1)
         idBlock = self.__browser.find_element_by_id("username")
         idBlock.send_keys(self.id)
