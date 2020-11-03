@@ -103,7 +103,7 @@ class postBody(object):
 
 class AutoReport(object):
 
-    loginURL = "https://newsso.shu.edu.cn/login"
+    loginURL = "https://newsso.shu.edu.cn/login/eyJ0aW1lc3RhbXAiOjE2MDQzNjk1ODc2NTA1NDYxMzQsInJlc3BvbnNlVHlwZSI6ImNvZGUiLCJjbGllbnRJZCI6IldVSFdmcm50bldZSFpmelE1UXZYVUNWeSIsInNjb3BlIjoiMSIsInJlZGlyZWN0VXJpIjoiaHR0cHM6Ly9zZWxmcmVwb3J0LnNodS5lZHUuY24vTG9naW5TU08uYXNweD9SZXR1cm5Vcmw9JTJmIiwic3RhdGUiOiIifQ=="
     reportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=%s"
     homeURL = "https://selfreport.shu.edu.cn"
     timeMarkDict = {"晨报": 1, "晚报": 2}
@@ -120,10 +120,10 @@ class AutoReport(object):
         data = {
             "username": self.id,
             "password": self.password,
-            "login_submit": "登录/Login"
+            "login_submit": ""
         }
         self.session.post(self.loginURL, data=data)
-        self.session.get("https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=WUHWfrntnWYHZfzQ5QvXUCVy&redirect_uri=https%3a%2f%2fselfreport.shu.edu.cn%2fLoginSSO.aspx%3fReturnUrl%3d%252fDefault.aspx&scope=1")
+        # self.session.get("https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=WUHWfrntnWYHZfzQ5QvXUCVy&redirect_uri=https%3a%2f%2fselfreport.shu.edu.cn%2fLoginSSO.aspx%3fReturnUrl%3d%252fDefault.aspx&scope=1")
         # self.session.get("https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=WUHWfrntnWYHZfzQ5QvXUCVy&redirect_uri=https%3a%2f%2fselfreport.shu.edu.cn%2fLoginSSO.aspx%3fReturnUrl%3d%252FXueSFX%252FHalfdayReport.aspx%253Ft%253D1%26t%3d1&scope=1")
         return 1
 
