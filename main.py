@@ -103,7 +103,7 @@ class postBody(object):
 
 class AutoReport(object):
 
-    loginURL = "https://newsso.shu.edu.cn/login/eyJ0aW1lc3RhbXAiOjE2MDQzNjk1ODc2NTA1NDYxMzQsInJlc3BvbnNlVHlwZSI6ImNvZGUiLCJjbGllbnRJZCI6IldVSFdmcm50bldZSFpmelE1UXZYVUNWeSIsInNjb3BlIjoiMSIsInJlZGlyZWN0VXJpIjoiaHR0cHM6Ly9zZWxmcmVwb3J0LnNodS5lZHUuY24vTG9naW5TU08uYXNweD9SZXR1cm5Vcmw9JTJmIiwic3RhdGUiOiIifQ=="
+    loginURL = "https://newsso.shu.edu.cn/login/"
     reportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=%s"
     homeURL = "https://selfreport.shu.edu.cn"
     timeMarkDict = {"晨报": 1, "晚报": 2}
@@ -114,7 +114,19 @@ class AutoReport(object):
         self.password = password
         self.tempreture = tempreture
         # self.timeMark = timeMark
-    
+
+    def _generateLoginURL(self):
+        param = {
+            "timestamp": time.time_ns(),
+            "responseType": "code",
+            "clientId": "WUHWfrntnWYHZfzQ5QvXUCVy",
+            "scope": "1",
+            "redirectUri": "https://selfreport.shu.edu.cn/LoginSSO.aspx?ReturnUrl=%2f",
+            "state": ""
+        }
+        loginURL = self.loginURL + str(base64.b64encode(json.dumps(param).encode()), encoding='utf8')
+        return loginURL
+
     def _login(self):
         self.session.headers.update({"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"})
         data = {
@@ -122,7 +134,7 @@ class AutoReport(object):
             "password": self.password,
             "login_submit": ""
         }
-        self.session.post(self.loginURL, data=data)
+        self.session.post(self._generateLoginURL(), data=data)
         # self.session.get("https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=WUHWfrntnWYHZfzQ5QvXUCVy&redirect_uri=https%3a%2f%2fselfreport.shu.edu.cn%2fLoginSSO.aspx%3fReturnUrl%3d%252fDefault.aspx&scope=1")
         # self.session.get("https://newsso.shu.edu.cn/oauth/authorize?response_type=code&client_id=WUHWfrntnWYHZfzQ5QvXUCVy&redirect_uri=https%3a%2f%2fselfreport.shu.edu.cn%2fLoginSSO.aspx%3fReturnUrl%3d%252FXueSFX%252FHalfdayReport.aspx%253Ft%253D1%26t%3d1&scope=1")
         return 1
