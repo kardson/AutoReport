@@ -4,6 +4,7 @@ from selenium import webdriver
 class AutoReport(object):
 
     loginURL = "https://newsso.shu.edu.cn/login"
+    mainpageURL = "https://selfreport.shu.edu.cn"
     reportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?t=%s"
     historyURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport_History.aspx"
     historyReportURL = "https://selfreport.shu.edu.cn/XueSFX/HalfdayReport.aspx?day=%s&t=%s"
@@ -33,13 +34,13 @@ class AutoReport(object):
         
     # TODO handle the situation of wrong id or password
     def login(self):
-        self.__browser.get(self.loginURL)
+        self.__browser.get(self.mainpageURL)
         self.__browser.implicitly_wait(1)
         idBlock = self.__browser.find_element_by_id("username")
         idBlock.send_keys(self.id)
         passwordBlock = self.__browser.find_element_by_id("password")
         passwordBlock.send_keys(self.password)
-        button = self.__browser.find_element_by_id("login-submit")
+        button = self.__browser.find_element_by_id("submit")
         button.click()
         self.__browser.implicitly_wait(1)
         try:
