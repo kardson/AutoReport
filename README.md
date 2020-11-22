@@ -1,19 +1,13 @@
 # AutoReport
-Automated report scripts for SHU students on campus in a traditional way 
+Automated report scripts for SHU students on campus in a traditional way   
+  
+Check branch ___requests___ or ___selenium___ for scripts.  
 
-## 1. How to use
-1. Set your environment timezone to Shanghai, China
-2. Deploy Venv for the script according to the requirments.txt
-4. Excute ``` crontab -e```
-5. Add a line `SHELL=/bin/bash` 
-6. Add a new line and input the instruction below, with `[]` replaced with your info, then save and quit.
-``` 
-* 7,20 * * * source [path to your venv]/bin/activate && python [path to the script folder]/main.py [Your student ID] [Your password] [Temperature] && deactivate
-```
+## Branchs
+### 1. ___requests___  
+A light way utilizes `requests` to directly post data and finish the reporting.  
+This branch does not support the feature of filling in historical reports.  
 
-## 2. Alternative method  
-Check the brach named  ___selenium___  to explore more  
-
-## 3. TODO  
-1. Status notification via Telegram Bot  
-2. Flask-based backend for Telegram Bot to build an automated check-in service  
+### 2. ___selenium___
+The tool `selenium` is used to invoke Chrome to simulate the action of filling in elements on website.  
+This branch supports the feature of filling in historical reports.
