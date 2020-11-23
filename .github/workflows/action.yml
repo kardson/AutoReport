@@ -15,4 +15,7 @@ jobs:
           ref: 'requests'
 
       - name: excecute
-        run: python main.py ${{ secrets.STUDENT_ID }} ${{ secrets.STUDENT_ID_PWD }} 36.2
+        env:
+          student_id: ${{ secrets.STUDENT_ID }}
+          student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
+        run: python main.py $student_id $student_id_pwd 36.2
