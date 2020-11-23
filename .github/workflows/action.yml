@@ -17,5 +17,5 @@ jobs:
       - name: excecute
         env:
           student_id: ${{ secrets.STUDENT_ID }}
-          student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
-        run: python main.py $student_id $student_id_pwd 36.2
+#           student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
+        run: python main.py $student_id 123456789 36.2
