@@ -2,20 +2,37 @@ name: Execute check-in based on Github Actions
 
 on:
   schedule:
-    - cron: 5 0, * * *
+    # execute every 8am(UTC+8) and 9pm(UTC+8)
+    - cron: '1 0,12 * * *'
+#   workflow_dispatch
 
 jobs:
-  requests:
+#   requests:
+#     runs-on: ubuntu-latest
+#     container: autorip/python-slim:AutoReport-light
+    
+#     steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           ref: 'requests'
+
+#       - name: excecute
+#         env:
+#           student_id: ${{ secrets.STUDENT_ID }}
+#           student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
+#         run: python main.py $student_id $student_id_pwd 36.2
+        
+  selenium:
     runs-on: ubuntu-latest
-    container: autorip/python-slim:AutoReport-light
+    container: autorip/python-slim:AutoReport-selenium
     
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: 'requests'
+          ref: 'selenium' 
 
       - name: excecute
         env:
           student_id: ${{ secrets.STUDENT_ID }}
-#           student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
-        run: python main.py $student_id 123456789 36.2
+          student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
+        run: python main.py $student_id $student_id_pwd 36.2
