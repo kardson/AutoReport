@@ -11,10 +11,10 @@ Automated report scripts for SHU students on campus based on Selenium
 ## 2. How to use
 1. Set your environment timezone to Shanghai, China
 2. Install Chrome
-3. Dowload webdriver and place it with the script
+3. Download webdriver and add it to `$PATH`
 4. Ensure your Python version >= 3.7
-5. Deploy Venv for the script according to the requirments.txt
-6. Excute ``` crontab -e```
+5. Deploy Venv for the script according to the requirements.txt
+6. Execute ``` crontab -e```
 7. Add a line `SHELL=/bin/bash` 
 8. Add a new line and input the instruction below, with `[]` replaced with your info, then save and quit.
 ``` 
