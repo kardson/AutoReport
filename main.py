@@ -38,6 +38,7 @@ class AutoReport(object):
         option.add_argument("--headless")
         option.add_argument("--disable-gpu")
         option.add_argument("--disable-dev-shm-usage")
+        # self.__browser = webdriver.Chrome("./chromedriver", options=option)
         self.__browser = webdriver.Chrome(options=option)
         return 1
 
@@ -110,6 +111,7 @@ class AutoReport(object):
             contactButton.click()
             # pass by(no)
             passbyButton = self.__browser.find_element_by_id("fineui_23-inputEl-icon")
+            passbyButton.click()
             # helth code color(green)
             codeButton = self.__browser.find_element_by_id("fineui_26-inputEl-icon")
             codeButton.click()
