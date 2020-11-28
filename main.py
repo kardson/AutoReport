@@ -99,6 +99,7 @@ class AutoReport(object):
             liveButton.click()
             # address
             address = self.__browser.find_element_by_id("p1_XiangXDZ-inputEl")
+            address.clear()
             address.send_keys("上海市宝山区上大路99号")
             # contact with people infected
             contactSelection = self.__browser.find_element_by_name("p1$QueZHZJC$Value")
