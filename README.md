@@ -27,5 +27,6 @@ This branch supports the feature of filling in historical reports.
 Several month ago: scripts generated  
 23/11/2020: add support for the 23/11/2020 version of selfreport  
 24/11/2020: add Github Actions support for the scripts so that it can run without a self-deployed server  
-25/11/2020: fix an error
-28/11/2020: solve the problem of wrong input on address textbox
+25/11/2020: fix an error  
+28/11/2020: solve the problem of wrong input on address textbox  
+23/12/2020: add support for the 22/12/2020 version of selfreport(selenium)  
