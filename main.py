@@ -35,11 +35,11 @@ class AutoReport(object):
         option = webdriver.ChromeOptions()
         # add --no-sandbox to enalbe chrome running under root account
         option.add_argument("--no-sandbox")
-        option.add_argument("--headless")
+        # option.add_argument("--headless")
         option.add_argument("--disable-gpu")
         option.add_argument("--disable-dev-shm-usage")
-        # self.__browser = webdriver.Chrome("./chromedriver", options=option)
-        self.__browser = webdriver.Chrome(options=option)
+        self.__browser = webdriver.Chrome("./chromedriver", options=option)
+        # self.__browser = webdriver.Chrome(options=option)
         return 1
 
     def __delBrowser(self):
@@ -104,14 +104,11 @@ class AutoReport(object):
             # contact with people infected
             contactSelection = self.__browser.find_element_by_name("p1$QueZHZJC$Value")
             self.__browser.execute_script("arguments[0].setAttribute('value', '否')", contactSelection)
-            # quarantine or not(no)
-            quarantineButton = self.__browser.find_element_by_id("fineui_15-inputEl-icon")
-            quarantineButton.click()
-            # direct contact(no)
-            contactButton = self.__browser.find_element_by_id("fineui_21-inputEl-icon")
+            # close contact(no)
+            contactButton = self.__browser.find_element_by_id("fineui_17-inputEl-icon")
             contactButton.click()
             # pass by(no)
-            passbyButton = self.__browser.find_element_by_id("fineui_23-inputEl-icon")
+            passbyButton = self.__browser.find_element_by_id("fineui_19-inputEl-icon")
             passbyButton.click()
             # helth code color(green)
             codeButton = self.__browser.find_element_by_id("fineui_26-inputEl-icon")
