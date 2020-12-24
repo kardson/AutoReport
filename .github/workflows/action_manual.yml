@@ -1,4 +1,4 @@
-name: Execute check-in based on Github Actions
+name: Manually execute check-in based on Github Actions
 
 on:
 #  schedule:
