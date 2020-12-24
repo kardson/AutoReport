@@ -35,11 +35,11 @@ class AutoReport(object):
         option = webdriver.ChromeOptions()
         # add --no-sandbox to enalbe chrome running under root account
         option.add_argument("--no-sandbox")
-        # option.add_argument("--headless")
+        option.add_argument("--headless")
         option.add_argument("--disable-gpu")
         option.add_argument("--disable-dev-shm-usage")
-        self.__browser = webdriver.Chrome("./chromedriver", options=option)
-        # self.__browser = webdriver.Chrome(options=option)
+        # self.__browser = webdriver.Chrome("./chromedriver", options=option)
+        self.__browser = webdriver.Chrome(options=option)
         return 1
 
     def __delBrowser(self):
