@@ -30,3 +30,4 @@ Several month ago: scripts generated
 25/11/2020: fix an error  
 28/11/2020: solve the problem of wrong input on address textbox  
 23/12/2020: add support for the 22/12/2020 version of selfreport(selenium)  
+17/01/2021: add support for the 17/01/2020 version of selfreport(selenium)  
