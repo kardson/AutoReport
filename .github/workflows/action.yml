@@ -3,7 +3,7 @@ name: Execute check-in based on Github Actions
 on:
   schedule:
     # execute every 8am(UTC+8) and 8pm(UTC+8)
-    - cron: '1 0,12 * * *'
+    - cron: '1,51 0,12 * * *'
 #   workflow_dispatch
 
 jobs:
