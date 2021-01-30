@@ -1,5 +1,5 @@
 # AutoReport
-Automated report scripts for SHU students on campus based on Selenium  
+Automated report scripts for SHU students based on Selenium  
 
 ## ~~1. Some question~~
 
@@ -18,5 +18,7 @@ Automated report scripts for SHU students on campus based on Selenium
 7. Add a line `SHELL=/bin/bash` 
 8. Add a new line and input the instruction below, with `[]` replaced with your info, then save and quit.
 ``` 
-* 7,20 * * * cd [path to your script folder] && source [path to your venv]/bin/activate && python [path to the script folder]/main.py [Your student ID] [Your password] [Temperature] && deactivate
-```
+* 7,20 * * * cd [path to your script folder] && source [path to your venv]/bin/activate && python [path to the script folder]/main.py [Your student ID] [Your password] [in Shanghai status, True or False] [on campus status, True or False] && deactivate
+```  
+__*Fill `True` or `False` in location and campus status__  
+__*To successfully run this script, you must manually submit your report for once as this script utilize your historical fill-ins.__  
