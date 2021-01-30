@@ -1,0 +1,25 @@
+name: once - Execute check-in based on Github Actions
+
+on:
+  schedule:
+    # execute every 8:01am and 8:51am (UTC+8)
+    - cron: '1,51 0 * * *'
+
+
+jobs:
+  selenium:
+    runs-on: ubuntu-latest
+    container: autorip/python-slim:AutoReport-selenium
+    
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: 'selenium_for_once'
+
+      - name: excecute
+        env:
+          student_id: ${{ secrets.STUDENT_ID }}
+          student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
+          in_shanghai: ${{ secrets.IN_SHANGHAI }}
+          on_campus: ${{ secrets.ON_CAMPUS }}
+        run: python main.py $student_id $student_id_pwd $in_shanghai $on_campus
