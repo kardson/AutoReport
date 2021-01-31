@@ -83,7 +83,7 @@ class AutoReport(object):
         if self.inShanghai:
             campusStatusElementId = "fineui_9-inputEl-icon" if self.onCampus else "fineui_10-inputEl-icon"
             campusStatus = self.__browser.find_element_by_id(campusStatusElementId)
-            campusStatusClassAttributes = locationStatus.get_attribute("class")
+            campusStatusClassAttributes = campusStatus.get_attribute("class")
             if "f-checked" not in campusStatusClassAttributes: campusStatus.click()
         submitButton = self.__browser.find_element_by_id("p1_ctl00_btnSubmit")
         submitButton.click()
@@ -91,6 +91,7 @@ class AutoReport(object):
         submitConfirmButton = self.__browser.find_element_by_id("fineui_34")
         submitConfirmButton.click()
         self.__browser.implicitly_wait(1)
+        # returnMessage = self.__browser.find_element_by_class_name("f-messagebox-message").text
         # TODO handle error
 
 
