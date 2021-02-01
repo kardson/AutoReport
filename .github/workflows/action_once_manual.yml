@@ -22,4 +22,5 @@ jobs:
           student_id_pwd: ${{ secrets.STUDENT_ID_PWD }}
           in_shanghai: ${{ secrets.IN_SHANGHAI }}
           on_campus: ${{ secrets.ON_CAMPUS }}
-        run: python main.py $student_id $student_id_pwd $in_shanghai $on_campus
+          is_home_address: ${{ secrets.IS_HOME_ADDRESS }}
+        run: python main.py $student_id $student_id_pwd $in_shanghai $on_campus $is_home_address
