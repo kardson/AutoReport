@@ -8,11 +8,15 @@ class AutoReport(object):
     reportURL = "https://selfreport.shu.edu.cn/DayReport.aspx?day=%s"
     historyURL = "https://selfreport.shu.edu.cn/ReportHistory.aspx"
 
-    def __init__(self, id="", password="", inShanghai="False", onCampus="False"):
+    def __init__(self, id="", password="", inShanghai="False", onCampus="False", isHomeAddress="True"):
         self.id = id
         self.password = password
+        assert inShanghai in ["True", "False"], "inShanghai Input Error"
         self.inShanghai = True if inShanghai == "True" else False
+        assert onCampus in ["True", "False"], "onCampus Input Error"
         self.onCampus = True if onCampus == "True" else False
+        assert isHomeAddress in ["True", "False"], "isHomeAddress Input Error"
+        self.isHomeAddress = True if isHomeAddress == "True" else False
         self.date = time.strftime("%Y-%m-%d", time.localtime())
         self.__browser = None
         # TODO logger need to be added
@@ -85,13 +89,25 @@ class AutoReport(object):
             campusStatus = self.__browser.find_element_by_id(campusStatusElementId)
             campusStatusClassAttributes = campusStatus.get_attribute("class")
             if "f-checked" not in campusStatusClassAttributes: campusStatus.click()
+        # Home Address
+        homeAddressStatusElementId = "fineui_11-inputEl-icon" if self.isHomeAddress else "fineui_12-inputEl-icon"
+        homeAddressStatus = self.__browser.find_element_by_id(homeAddressStatusElementId)
+        homeAddressStatusCLassAttributes = homeAddressStatus.get_attribute("class")
+        if "f-checked" not in homeAddressStatusCLassAttributes: homeAddressStatus.click()
         submitButton = self.__browser.find_element_by_id("p1_ctl00_btnSubmit")
         submitButton.click()
         self.__browser.implicitly_wait(1)
-        submitConfirmButton = self.__browser.find_element_by_id("fineui_34")
+        try:
+            errorMessage = self.__browser.find_element_by_class_name("f-messagebox-errorfield").text
+        except:
+            pass
+        else:
+            raise Exception(errorMessage)
+        submitConfirmButton = self.__browser.find_element_by_xpath("//*[@class='f-btn-text' and text()='确定']")
         submitConfirmButton.click()
         self.__browser.implicitly_wait(1)
-        # returnMessage = self.__browser.find_element_by_class_name("f-messagebox-message").text
+        returnMessage = self.__browser.find_element_by_class_name("f-messagebox-message").text
+        assert returnMessage == "提交成功", "Submit Failed"
         # TODO handle error
 
 
@@ -118,5 +134,5 @@ class AutoReport(object):
         self.__delBrowser()
 
 if __name__ == "__main__":
-    flow = AutoReport(id=sys.argv[1], password=sys.argv[2], inShanghai=sys.argv[3], onCampus=sys.argv[4])
+    flow = AutoReport(id=sys.argv[1], password=sys.argv[2], inShanghai=sys.argv[3], onCampus=sys.argv[4], isHomeAddress=sys.argv[5])
     flow.report()
