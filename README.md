@@ -24,4 +24,5 @@ Several month ago: scripts generated
 17/01/2021: add support for the 17/01/2020 version of selfreport(selenium)  
 20/01/2021: scripts will execute twice both in the morning and in the evening  
 30/01/2021: add support for new daily report, use branch `selenium_for_once`(disable previous `action.yml`s before enable the new ones)  
-__01/02/2021(latest): add support for "is home address" selection, add a new param to script execution command__  
+01/02/2021: add support for "is home address" selection, add a new param to script execution command
+14/03/2021(latest): submit button id changed
